@@ -1,0 +1,28 @@
+1. 실행
+$ reader 1 5 &
+  reader 2 5 &
+  writer  3 3 &
+  reader 4 5 &
+  reader 5 3 &
+  writer  6 3 &
+  
+2.세마포를 이용하여 Lock과 Condition Variable을 만들어 구성된 Mesa Style Monitor로 Reader & Writer Problem을 구현
+Reader & Writer 문제를 동기화 하기 위해 database에 읽고 쓰는 상태를 나타내는 4개의 counter(AW, AR, WW, WR) 로 동기화한다. 
+이 counter들을 4개의 파일에 각각 기록한다.
+
+3.실행 분석
+1. reader가 1초 후 읽기 시작하고 6초까지 5초동안 active reader가 된다.
+2. reader가 2초 후 읽기 시작하고 7초까지 5초동안 active reader가 된다.
+3. writer가 3초 후 쓰려고 했으나 active reader가 읽고 있으므로 마지막 active reader가 나올 때
+까지 waiting writer가 되어 기다린다. 마지막 active reader인 2.reader가 나오는 7초부터 3초동안
+active writer가 된다.
+4.reader가 4초 후 읽으려고 했으나 3.의 waiting writer가 기다리고 있으므로 4초부터 waiting
+reader 가 되어 기다린다.
+5. reader가 5초 후 읽으려고 했으나 3.의 waiting writer가 기다리고 있으므로 5초부터 waiting
+reader가 되어 기다린다
+6. writer 가 6초 후 쓰려고 했으나 active reader가 읽고 있어서 waiting writer가 되어 기다린다.
+마지막 active reader가 나가고 7초 후부터는 먼저 온 3.writer가 active writer가 되고, 또 기다린다.
+이 사이에 4. 와 5.의 waiting reader가 있지만 우선순위가 높은 6.writer가 먼저 쓸 수 있다. 6.
+writer는 3.의 writer가 나온 후 11초부터 activer writer가 되어 3초동안 쓴다. 4.와 5.의 reader들
+은 6. 의 writer가 쓸 동안 또 기다리다가 6.writer가 나온 후 13초 후부터 각각 5초, 3초동안 읽
+는다. 그러므로 총 실행시간은 마지막 active reader인 4. reader 가 나오는 18초다.
