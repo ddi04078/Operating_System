@@ -1,4 +1,4 @@
-# Operatng_System
+# Operating_System
 
 1. reader & writer problem
 
